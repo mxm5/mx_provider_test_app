@@ -6,7 +6,8 @@ import 'package:provider/provider.dart';
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final p = Provider.of<Product>(context);
+    final p = Provider.of<Product>(context, listen: false);
+    //! this does not rebuild just reads once
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GestureDetector(
@@ -18,11 +19,16 @@ class ProductItem extends StatelessWidget {
           footer: GridTileBar(
             title: Text(p.title),
             backgroundColor: Colors.black38,
-            leading: IconButton(
-              onPressed: () {
-                p.toggleFavorite();
-              },
-              icon: Icon(p.isFavorite ? Icons.favorite : Icons.favorite_border),
+            leading: Consumer<Product>(
+              //? this only listens to what is provided toper and always rebuild
+              builder: (ctx, product, _) => IconButton(
+                onPressed: () {
+                  product.toggleFavorite();
+                },
+                icon: Icon(product.isFavorite
+                    ? Icons.favorite
+                    : Icons.favorite_border),
+              ),
             ),
             trailing: IconButton(
               onPressed: () {},
